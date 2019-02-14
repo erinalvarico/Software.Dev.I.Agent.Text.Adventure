@@ -1,0 +1,686 @@
+//[Video Game Project] Agent
+//[Developers] Erin Alvarico and Joey LoRusso
+//[Class] CMPT220L - 200 Software Development I
+//[Professor] Carolyn Sher-DeCusatis
+//[Part] Hall Simulation
+
+//Imported Items
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+//Swing Imported Functions
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.ImageIcon;
+
+//Main Class: Code Starts Here!
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+public class HallSim 
+{
+
+	// Creating the variables for each individual object to fit onto the window
+	JFrame window;
+	Container con;
+	JPanel titleNamePanel, developerNamePanel, startButtonPanel, mainTextPanel, choiceButtonPanel, playerPanel;
+	JLabel titleNameLabel, developerNameLabel, hpLabel, hpLabelNumber, weaponLabel, weaponLabelName;
+	Font titleFont = new Font("Times New Roman", Font.PLAIN, 95);
+	Font normalFont = new Font("Times New Roman", Font.PLAIN, 40);
+	JButton startButton, choice1, choice2, choice3, choice4;
+	JTextArea mainTextArea, mapArea;
+	int playerHP;
+	String weapon, position;
+	
+	//Objects
+	TitleScreenHandler tsHandler = new TitleScreenHandler();
+	ChoiceHandler choiceHandler = new ChoiceHandler();
+	
+	public static void main(String[] args)
+	{
+		
+		new HallSim();
+		
+	}
+	
+	//Creating the dimensions of the individual visual objects (Text), formatting and placement
+	public HallSim() 
+	{
+		
+		//The actual pop-up window
+		window = new JFrame();
+		window.setSize(1680, 1050);
+		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		window.getContentPane().setBackground(Color.black);
+		window.setLayout(null);
+		con = window.getContentPane();
+		
+		//The title name (Agent)
+		titleNamePanel = new JPanel();
+		titleNamePanel.setBounds(270, 200, 1100, 130);
+		titleNamePanel.setBackground(Color.black);
+		titleNameLabel = new JLabel("A G E N T");
+		titleNameLabel.setForeground(Color.white);
+		titleNameLabel.setFont(titleFont);
+		
+		//The developer shoutout (Names)
+		developerNamePanel = new JPanel();
+		developerNamePanel.setBounds(270, 350, 1100, 170);
+		developerNamePanel.setBackground(Color.black);
+		developerNameLabel = new JLabel("Published by Erin Alvarico and Joey LoRusso");
+		developerNameLabel.setForeground(Color.white);
+		developerNameLabel.setFont(normalFont);
+		
+		//The start button (Box)
+		startButtonPanel = new JPanel();
+		startButtonPanel.setBounds(600, 550, 400, 200);
+		startButtonPanel.setBackground(Color.black);
+		//The start button (Text)
+		startButton = new JButton("START");
+		startButton.setBackground(Color.black);
+		startButton.setForeground(Color.white);
+		startButton.setFont(normalFont);
+		startButton.addActionListener(tsHandler);
+		startButton.setFocusPainted(false);
+		
+		//Placing the labels on the containers/panels
+		titleNamePanel.add(titleNameLabel);
+		developerNamePanel.add(developerNameLabel);
+		startButtonPanel.add(startButton);
+		
+		con.add(titleNamePanel);
+		con.add(developerNamePanel);
+		con.add(startButtonPanel);
+		
+		//Set all variables tp be seen to viewers
+		window.setVisible(true);
+		
+	}
+	
+	//Movement to next "page" or next phase: the gaming setup
+	//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public void createGameScreen()
+	{
+		
+		//The panels from previous title screen have been set to be hidden (not seen by viewers)
+		titleNamePanel.setVisible(false);
+		developerNamePanel.setVisible(false);
+		startButtonPanel.setVisible(false);
+		
+		/*map Icon: Lab
+		mapLabelLab = new JLabel(mapLab);
+		mapFrameLab.add(mapLabelLab);
+		mapFrameLab.pack();
+				
+		map Icon: Hall
+		mapLabelHall = new JLabel(mapHall);
+		mapPanelHall = new JPanel();
+		mapPanelHall.setBounds(150, 200, 1300, 400);
+		mapPanelHall.setBackground(Color.red);
+		mapPanelHall.add(mapLabelHall);
+		con.add(mapPanelHall);
+				
+		map Icon: Bar
+		mapLabelBar = new JLabel(mapBar);
+		mapPanelBar = new JPanel();
+		mapPanelBar.setBounds(150, 200, 1300, 400);
+		mapPanelBar.setBackground(Color.red);
+		mapPanelBar.add(mapLabelBar);
+		con.add(mapPanelBar);
+				
+		//map Icon: Evil Conference Room
+		mapLabelEvilCon = new JLabel(mapEvilCon);
+		mapPanelEvilCon = new JPanel();
+		mapPanelEvilCon.setBounds(150, 200, 1300, 400);
+		mapPanelEvilCon.setBackground(Color.red);
+		mapPanelEvilCon.add(mapLabelEvilCon);
+		con.add(mapPanelEvilCon);
+				
+		All maps are not visible, will be shown during move choice
+		mapFrameLab.setVisible(false);
+		mapPanelHall.setVisible(false);	
+		mapPanelBar.setVisible(false);
+		mapPanelEvilCon.setVisible(false);
+		*/
+		
+		//Setting up main text area (where the main game will be played)
+		mainTextPanel = new JPanel();
+		mainTextPanel.setBounds(150, 200, 1300, 400);
+		mainTextPanel.setBackground(Color.black);
+		con.add(mainTextPanel);
+		
+		mainTextArea = new JTextArea();
+		mainTextArea.setBounds(150, 200, 1300, 400);
+		mainTextArea.setBackground(Color.black);
+		mainTextArea.setForeground(Color.white);
+		mainTextArea.setFont(normalFont);
+		mainTextArea.setLineWrap(true);
+		mainTextPanel.add(mainTextArea);
+		
+		//4-button panel to make choices (action listener sees the choices)
+		choiceButtonPanel = new JPanel();
+		choiceButtonPanel.setBounds(550, 650, 500, 200);
+		choiceButtonPanel.setBackground(Color.black);
+		choiceButtonPanel.setLayout(new GridLayout(4, 1));
+		con.add(choiceButtonPanel);
+		//The design of the buttons
+		choice1 = new JButton("Choice 1");
+		choice1.setBackground(Color.black);
+		choice1.setForeground(Color.white);
+		choice1.setFont(normalFont);
+		choice1.setFocusPainted(false);
+		choice1.addActionListener(choiceHandler);
+		choice1.setActionCommand("c1");
+		choiceButtonPanel.add(choice1);
+		choice2 = new JButton("Choice 2");
+		choice2.setBackground(Color.black);
+		choice2.setForeground(Color.white);
+		choice2.setFont(normalFont);
+		choice2.setFocusPainted(false);
+		choice2.addActionListener(choiceHandler);
+		choice2.setActionCommand("c2");
+		choiceButtonPanel.add(choice2);
+		choice3 = new JButton("Choice 3");
+		choice3.setBackground(Color.black);
+		choice3.setForeground(Color.white);
+		choice3.setFont(normalFont);
+		choice3.setFocusPainted(false);
+		choice3.addActionListener(choiceHandler);
+		choice3.setActionCommand("c3");
+		choiceButtonPanel.add(choice3);
+		choice4 = new JButton("Choice 4");
+		choice4.setBackground(Color.black);
+		choice4.setForeground(Color.white);
+		choice4.setFont(normalFont);
+		choice4.setFocusPainted(false);
+		choice4.addActionListener(choiceHandler);
+		choice4.setActionCommand("c4");
+		choiceButtonPanel.add(choice4);
+		
+		//Over head status bar for player knowledge
+		playerPanel = new JPanel();
+		playerPanel.setBounds(100, 70, 1400, 70);
+		playerPanel.setBackground(Color.black);
+		playerPanel.setLayout(new GridLayout(1,4));
+		con.add(playerPanel);
+		
+		//The contents of the panel: Health and Object
+		hpLabel = new JLabel("HP: ");
+		hpLabel.setFont(normalFont);
+		hpLabel.setForeground(Color.white);
+		playerPanel.add(hpLabel);
+		hpLabelNumber = new JLabel();
+		hpLabelNumber.setFont(normalFont);
+		hpLabelNumber.setForeground(Color.white);
+		playerPanel.add(hpLabelNumber);
+		weaponLabel = new JLabel("Weapon: ");
+		weaponLabel.setFont(normalFont);
+		weaponLabel.setForeground(Color.white);
+		playerPanel.add(weaponLabel);
+		weaponLabelName = new JLabel();
+		weaponLabelName.setFont(normalFont);
+		weaponLabelName.setForeground(Color.white);
+		playerPanel.add(weaponLabelName);
+		
+		
+		//Calls to playerSetup() method
+		playerSetup();
+				
+	}
+	
+	//Player information
+	//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public void playerSetup()
+	{
+		
+		playerHP = 100;
+		weapon = "Fists";
+		weaponLabelName.setText(weapon);
+		hpLabelNumber.setText("" + playerHP);
+		
+		introLab1();
+		
+	}
+	
+	//Start of the Intro to the Lab 
+	//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public void introLab1()
+	{
+		position = "introlab1";
+		mainTextArea.setText("You awake with blurry vision and ringing in your ears. Your skull pounds hard \nlike a drum, as if your head will split in half. Despite the agonizing pain, you \ndecide to power through it: \n\nGrunting, you weakly try to sit up.");
+		choice1.setText("C O N T I N U E");
+		choice2.setText("");
+		choice3.setText("");
+		choice4.setText("");
+	}
+	
+	public void introLab2()
+	{
+		position = "introlab2";
+		mainTextArea.setText("Sitting up as much as you can, you feel your wrists suddenly grow heavy and \nresist with tension. You look down to see that you are strapped to the operation \ntable. \n\n\nWho did this,why are we here, and where in the world are you?!");
+		choice1.setText("C O N T I N U E");
+		choice2.setText("");
+		choice3.setText("");
+		choice4.setText("");
+	}
+	
+	public void introLab3()
+	{
+		position = "introlab3";
+		mainTextArea.setText("Fortunately, you (mysteriously) have a utility knife in hand! It's weird, why would you---assuming you were kidnapped---still have items on you? \n\n Well, whatever, now's your chance to escape!");
+		choice1.setText("C O N T I N U E");
+		choice2.setText("");
+		choice3.setText("");
+		choice4.setText("");
+	}
+	
+	public void introLab4()
+	{
+		position = "introlab4";
+		mainTextArea.setText("You quickly saw through the strappings, and releaase yourself from your \nimprisoned state! Huzzah! Rubbing yout wrists from how sore they were, you \nrealize your headache is getting better. \n\nYour vision finally stabilzes, and you can see arousn the dimmly lit room.");
+		choice1.setText("C O N T I N U E");
+		choice2.setText("");
+		choice3.setText("");
+		choice4.setText("");
+	}
+	
+	public void introLab5()
+	{
+		position = "introlab5";
+		mainTextArea.setText("Now looking around, you infer that you are in some type of labratory. The walls \nare lined with shelves holding neatly labeled jars filled with strange liquids and ...things. \n\nWhat an erie vibe...how did you end up here?");
+		choice1.setText("C O N T I N U E");
+		choice2.setText("");
+		choice3.setText("");
+		choice4.setText("");
+	}
+	//End of Lab Intro
+	
+	//Choices:
+	//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public void done()
+	{
+		position = "done";
+		mainTextArea.setText("What do you choose to do?");
+		choice1.setText("M O V E");
+		choice2.setText("A C T I O N");
+		choice3.setText("E X A M I N E");
+		choice4.setText("Q U I T");
+	}
+	
+	public void moveLab(int roomNum)
+	{
+		position = "moveLab";
+		mainTextArea.setText("You decide that it's best to move on, and press forward! \n\nWhich direction do you choose to go?");
+		
+		choice1.setText("U P");
+		choice2.setText("");
+		choice3.setText("");
+		choice4.setText("");
+		
+	}
+	
+	public void moveHall(int roomNum)
+	{
+		position = "moveHall";
+		mainTextArea.setText("You decide that it's best to move on, and press forward! \n\nWhich direction do you choose to go?");
+		
+		choice1.setText("U P");
+		choice2.setText("R I G H T");
+		choice3.setText("D O W N");
+		choice4.setText("");
+		
+	}
+	
+	public void moveBar(int roomNum)
+	{
+		position = "moveBar";
+		mainTextArea.setText("You decide that it's best to move on, and press forward! \n\nWhich direction do you choose to go?");
+		
+		choice1.setText("L E F T");
+		choice2.setText("");
+		choice3.setText("");
+		choice4.setText("");
+		
+	}
+	
+	public void moveEvilCon(int roomNum)
+	{
+		position = "moveEvilCon";
+		mainTextArea.setText("You decide that it's best to move on, and press forward! \n\nWhich direction do you choose to go?");
+		
+		choice1.setText("D O W N");
+		choice2.setText("");
+		choice3.setText("");
+		choice4.setText("");
+		
+	}
+	
+	public int lab(int roomNum)
+	{
+		position = "lab";
+		roomNum = 0;
+		mainTextArea.setText("You have arrived in the Labratory.");
+		choice1.setText("C O N T I N U E");
+		choice2.setText("");
+		choice3.setText("");
+		choice4.setText("");
+		
+		return roomNum;
+	}
+	
+	public int hall(int roomNum)
+	{
+		position = "hall";
+		roomNum = 1;
+		mainTextArea.setText("You have arrived in the Hall.");
+		choice1.setText("C O N T I N U E");
+		choice2.setText("");
+		choice3.setText("");
+		choice4.setText("");
+		
+		return roomNum;
+	}
+	
+	public int bar(int roomNum)
+	{
+		position = "bar";
+		roomNum = 2;
+		mainTextArea.setText("You have arrived in the Bar(?).");
+		choice1.setText("C O N T I N U E");
+		choice2.setText("");
+		choice3.setText("");
+		choice4.setText("");
+		
+		return roomNum;
+	}
+	
+	public int evilCon(int roomNum)
+	{	
+		position = "evilCon";
+		roomNum = 3;
+		mainTextArea.setText("You have arrived in the Evil Conference Room.");
+		choice1.setText("C O N T I N U E");
+		choice2.setText("");
+		choice3.setText("");
+		choice4.setText("");
+		
+		return roomNum;
+	}
+	
+	public void ShowPicture(int roomNum)
+	{
+		if (roomNum == 0){
+			JFrame mapFrameLab = new JFrame();
+			ImageIcon mapLab = new ImageIcon("map0.jpg");
+			JLabel mapLabelLab = new JLabel(mapLab);
+			mapFrameLab.add(mapLabelLab);
+			mapFrameLab.pack();
+			mapFrameLab.setVisible(true);
+		}else if (roomNum == 1){
+			JFrame mapFrameHall = new JFrame();
+			ImageIcon mapHall = new ImageIcon("map1.jpg");
+			JLabel mapLabelHall = new JLabel(mapHall);
+			mapFrameHall.add(mapLabelHall);
+			mapFrameHall.pack();
+			mapFrameHall.setVisible(true);
+		}else if (roomNum == 2){
+			JFrame mapFrameBar = new JFrame();
+			ImageIcon mapBar = new ImageIcon("map2.jpg");
+			JLabel mapLabelBar = new JLabel(mapBar);
+			mapFrameBar.add(mapLabelBar);
+			mapFrameBar.pack();
+			mapFrameBar.setVisible(true);
+		}else if (roomNum == 3){
+		  JFrame mapFrameEvilCon = new JFrame();
+		  ImageIcon mapEvilCon = new ImageIcon("map3.jpg");
+		  JLabel mapLabelEvilCon = new JLabel(mapEvilCon);
+		  mapFrameEvilCon.add(mapLabelEvilCon);
+		  mapFrameEvilCon.pack();
+		  mapFrameEvilCon.setVisible(true);
+		 }	  
+		  
+	}
+	
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	//Movement function: to get around the map!
+	//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public void move(int roomNum)
+	{
+		if (roomNum == 0)
+		{
+			ShowPicture(roomNum);
+			moveLab(roomNum);
+		}
+		
+		if (roomNum == 1)
+		{
+			ShowPicture(roomNum);
+			moveHall(roomNum);
+		}
+		
+		if (roomNum == 2)
+		{
+			ShowPicture(roomNum);
+			moveBar(roomNum);
+		}
+		
+		if (roomNum == 3)
+		{
+			ShowPicture(roomNum);
+			moveEvilCon(roomNum);
+		}
+	}
+	
+	//Action function: to interact with select special points of interests in the rooms!
+	public void action()
+	{
+		position = "action";
+		mainTextArea.setText("You decide that you should do something about the situation. \n\nWhat do you choose to do?");
+		choice1.setText("T A K E");
+		choice2.setText("T A L K");
+		choice3.setText("U S E");
+		choice4.setText("");
+	}
+	
+	//Examine function: to examine and check on points of interests!
+	public void examine()
+	{
+		position = "examine";
+		mainTextArea.setText("You decide that you should take a closer look of your surroundings. Perhaps you can salvage something from the area. \n\nWhat do you choose to examine first?");
+		choice1.setText("C O N T I N U E");
+		choice2.setText("");
+		choice3.setText("");
+		choice4.setText("");
+	}
+	
+	//Quit function to quit the game!
+	public void quit()
+	{
+		position = "quit";
+		mainTextArea.setText("Are you sure you want to quit? The game does not \nsave your progress. You will need to start all over again! \n\nDo you still want to quit the game?");
+		choice1.setText("Y E S");
+		choice2.setText("N O");
+		choice3.setText("");
+		choice4.setText("");
+	}
+	//Confirm option (In case it was accidentally clicked)
+	public void quitConfirm()
+	{
+		position = "quitConfirm";
+		mainTextArea.setText("Understood. You game will not be saved, and you will exit the game. \nWe hope you enjoyed the game! Please come back to try \nit again. \n\nPlease select the button to quit.");
+		choice1.setText("Q U I T");
+		choice2.setText("");
+		choice3.setText("");
+		choice4.setText("");
+	}
+	//Process of manual quitting
+	public void quitQuit()
+	{
+		position = "quitQuit";
+		System.exit(0);
+	}
+	
+	//Choice Handler
+	//----------------------------------------------------------------------------------------------------------
+	
+	class TitleScreenHandler implements ActionListener
+	{
+		public void actionPerformed(ActionEvent event)
+		{
+			createGameScreen();
+		}
+	}
+	
+	//"Listening" to clicks and interaction of buttons to determine choice
+	public class ChoiceHandler implements ActionListener
+	{
+		int roomNum = 0;
+		
+		public void  actionPerformed(ActionEvent event)
+		{
+			String yourChoice = event.getActionCommand();
+			
+			switch(position)
+			{
+			//Start of adventure
+			//Lab Intro --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+				case "introlab1":
+					switch(yourChoice)
+					{
+						case "c1": introLab2(); break;
+					}
+					break;
+				//LI-2
+				case "introlab2":
+					switch(yourChoice)
+					{
+						case "c1": introLab3(); break;
+					}
+					break;
+				//LI-3
+				case "introlab3":
+					switch(yourChoice)
+					{
+						case "c1": introLab4(); break;
+					}
+					break;
+				//LI-4
+				case "introlab4":
+					switch(yourChoice)
+					{
+						case "c1": introLab5(); break;
+					}
+					break;
+				//Choice goes to generic actions of player
+				//Determines changes and interactions -----------------------------------------------------------------------------------------------------------------------------------------------------\\
+				case "introlab5":
+					switch(yourChoice)
+					{
+						case "c1": done(); break;
+					}
+					break;
+				//4-choices for player to play and engage in game!
+				case "done":
+					switch(yourChoice)
+					{
+						case "c1": move(roomNum); break;
+						case "c2": action(); break;
+						case "c3": examine(); break;
+						case "c4": quit(); break;
+					}
+					break;
+				//Move Function:
+				case "moveLab":
+					switch(yourChoice)
+					{
+						case "c1": roomNum = hall(roomNum); break;
+					}
+					break;
+				case "moveHall":
+					switch(yourChoice)
+					{
+						case "c1": roomNum = evilCon(roomNum); break;
+						case "c2": roomNum = bar(roomNum); break;
+						case "c3": roomNum = lab(roomNum); break;
+					}
+					break;
+				case "moveBar":
+					switch(yourChoice)
+					{
+						case "c1": roomNum = hall(roomNum); break;
+					}
+					break;
+				case "moveEvilCon":
+					switch(yourChoice)
+					{
+						case "c1": roomNum = hall(roomNum); break;
+					}
+					break;
+				//Individual rooms and their initial description
+				//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+				case "lab":
+					switch(yourChoice)
+					{
+						case "c1": done(); break;
+					}
+					break;
+				case "hall":
+					switch(yourChoice)
+					{
+						case "c1": done(); break;
+					}
+					break;
+				case "bar":
+					switch(yourChoice)
+					{
+						case "c1": done(); break;
+					}
+					break;
+				case "evilCon":
+					switch(yourChoice)
+					{
+						case "c1": done(); break;
+					}
+					break;
+				//Action Function:
+				//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+				case "action":
+					switch(yourChoice)
+					{
+						case "c1": done(); break;
+					}
+					break;
+				//Examine Function:
+				case "examine":
+					switch(yourChoice)
+					{
+						case "c1": done(); break;
+					}
+					break;
+				//Quit Function
+				//Manually quitting the game --------------------------------------------------------------------------------------------------------------------------------------------------\\
+				case "quit":
+					switch(yourChoice)
+					{
+						case "c1": quitConfirm(); break;
+						case "c2": done(); break;
+					}
+					break;
+				case "quitConfirm":
+					switch(yourChoice)
+					{
+						case "c1": quitQuit(); break;
+					}
+					break;
+					//Essentially end of coding...
+					//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+				}
+			}
+	}
+}
