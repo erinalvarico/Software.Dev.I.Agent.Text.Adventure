@@ -1,0 +1,1238 @@
+//[Video Game Project] Agent
+//[Developers] Erin Alvarico and Joey LoRusso
+//[Class] CMPT220L - 200 Software Development I
+//[Professor] Carolyn Sher-DeCusatis
+//[Part] Game Layout Improvement
+
+//Imported Items
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+
+//Swing Imported Functions
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.ImageIcon;
+
+//Main Class: Code Starts Here!
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+public class GameLayout 
+{
+
+	// Creating the variables for each individual object to fit onto the window
+	JFrame window;
+	// Create container to hold all panels and labels
+	Container con;
+	// Panels for all labels to be "placed" on
+	JPanel titleNamePanel, developerNamePanel, startButtonPanel, mainTextPanel, choiceButtonPanel, playerPanel;
+	JLabel titleNameLabel, developerNameLabel, hpLabel, hpLabelNumber, weaponLabel, weaponLabelName;
+
+	//Image panels and labels
+	ImageIcon map = new ImageIcon("maaapa.jpg");
+	JLabel mapLabel = new JLabel(map);
+	JPanel mapPanel = new JPanel();
+
+	// Fonts for labels: to distinguish the differences of different labels and change graphic appeal
+	Font titleFont = new Font("Times New Roman", Font.PLAIN, 95);
+	Font normalFont = new Font("Times New Roman", Font.PLAIN, 40);
+
+	// Choice buttons for selection and user interaction
+	JButton startButton, choice1, choice2, choice3, choice4;
+	JTextArea mainTextArea, mapArea;
+
+	// Basic other variables
+	int playerHP;
+	String weapon, position;
+
+	// Adding room values and listing in array
+	int lab = 0;
+	int hall = 1;
+	int bar = 2;
+	int evilCon = 3;
+	int magicShop = 4;
+	int sharkTank = 5;
+	int comCenter = 6;
+	int gym = 7;
+
+	// Array for rooms in map layout: to determine which room the player is 
+	// currently in, via numerical values.
+	int[] roomList = {lab, hall, bar, evilCon, magicShop, sharkTank,comCenter, gym};
+
+	//Objects
+	TitleScreenHandler tsHandler = new TitleScreenHandler();
+	ChoiceHandler choiceHandler = new ChoiceHandler();
+
+	//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public static void main(String[] args)
+	{
+
+		// Launches official game window pop-up
+		new GameLayout();
+
+	}
+
+	// Creating the dimensions of the individual visual objects (Text), formatting and placement
+	//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public GameLayout() 
+	{
+
+		// The actual pop-up window
+		window = new JFrame();
+		// Set dimensions of window
+		window.setSize(1680, 1050);
+		// When clicking the exit button, window will close
+		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		// Color of the background of window
+		window.getContentPane().setBackground(Color.black);
+		window.setLayout(null);
+		con = window.getContentPane();
+
+		// The title name (Agent)
+		titleNamePanel = new JPanel();
+		// Dimensions of where text can be displayed
+		titleNamePanel.setBounds(270, 200, 1100, 130);
+		// Color of background panel
+		titleNamePanel.setBackground(Color.black);
+		// The label and the text supposed to be displayed
+		titleNameLabel = new JLabel("A G E N T");
+		// Color of text
+		titleNameLabel.setForeground(Color.BLUE);
+		titleNameLabel.setFont(titleFont);
+
+		//The developer shout-out (Names)
+		developerNamePanel = new JPanel();
+		// Dimensions of where text can be displayed
+		developerNamePanel.setBounds(270, 350, 1100, 170);
+		// Color of background panel
+		developerNamePanel.setBackground(Color.black);
+		// The label and the text supposed to be displayed
+		developerNameLabel = new JLabel("Published by Erin Alvarico and Joey LoRusso");
+		// Color of text
+		developerNameLabel.setForeground(Color.white);
+		developerNameLabel.setFont(normalFont);
+
+		//The start button (Box)
+		startButtonPanel = new JPanel();
+		// Dimensions of boundaries
+		startButtonPanel.setBounds(600, 550, 400, 200);
+		// Set color of button
+		startButtonPanel.setBackground(Color.black);
+		//The start button (Text)
+		startButton = new JButton("START");
+		startButton.setBackground(Color.black);
+		startButton.setForeground(Color.white);
+		startButton.setFont(normalFont);
+		startButton.addActionListener(tsHandler);
+		startButton.setFocusPainted(false);
+
+		//Placing the labels on the containers/panels
+		titleNamePanel.add(titleNameLabel);
+		developerNamePanel.add(developerNameLabel);
+		startButtonPanel.add(startButton);
+
+		con.add(titleNamePanel);
+		con.add(developerNamePanel);
+		con.add(startButtonPanel);
+
+		//Set all variables tp be seen to viewers
+		window.setVisible(true);
+
+	}
+
+	//Movement to next "page" or next phase: the gaming setup
+	//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public void createGameScreen()
+	{
+
+		//The panels from previous title screen have been set to be hidden (not seen by viewers)
+		titleNamePanel.setVisible(false);
+		developerNamePanel.setVisible(false);
+		startButtonPanel.setVisible(false);
+
+		//Map Image Icon:
+		//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+		mapPanel.add(mapLabel);  
+		mapPanel.setBounds(1110, 450, 454, 410);
+		mapPanel.setBackground(Color.black);
+		con.add(mapPanel);
+		mapPanel.setVisible(false);
+		//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+
+		// Setting up main text area (where the main game will be played)
+		mainTextPanel = new JPanel();
+		mainTextPanel.setBounds(150, 200, 1300, 400);
+		mainTextPanel.setBackground(Color.black);
+		con.add(mainTextPanel);
+
+		mainTextArea = new JTextArea();
+		mainTextArea.setBounds(150, 200, 1300, 400);
+		mainTextArea.setBackground(Color.black);
+		mainTextArea.setForeground(Color.white);
+		mainTextArea.setFont(normalFont);
+		mainTextArea.setLineWrap(true);
+		mainTextPanel.add(mainTextArea);
+
+		// 4-button panel to make choices (action listener sees the choices)
+		choiceButtonPanel = new JPanel();
+		choiceButtonPanel.setBounds(550, 650, 500, 200);
+		choiceButtonPanel.setBackground(Color.black);
+		choiceButtonPanel.setLayout(new GridLayout(4, 1));
+		con.add(choiceButtonPanel);
+
+		// The design of the buttons
+		// Button #1
+		choice1 = new JButton("Choice 1");
+		choice1.setBackground(Color.black);
+		choice1.setForeground(Color.white);
+		choice1.setFont(normalFont);
+		choice1.setFocusPainted(false);
+		choice1.addActionListener(choiceHandler);
+		choice1.setActionCommand("c1");
+		choiceButtonPanel.add(choice1);
+
+		// Button #2
+		choice2 = new JButton("Choice 2");
+		choice2.setBackground(Color.black);
+		choice2.setForeground(Color.white);
+		choice2.setFont(normalFont);
+		choice2.setFocusPainted(false);
+		choice2.addActionListener(choiceHandler);
+		choice2.setActionCommand("c2");
+		choiceButtonPanel.add(choice2);
+
+		// Button #3
+		choice3 = new JButton("Choice 3");
+		choice3.setBackground(Color.black);
+		choice3.setForeground(Color.white);
+		choice3.setFont(normalFont);
+		choice3.setFocusPainted(false);
+		choice3.addActionListener(choiceHandler);
+		choice3.setActionCommand("c3");
+		choiceButtonPanel.add(choice3);
+
+		// Button #4
+		choice4 = new JButton("Choice 4");
+		choice4.setBackground(Color.black);
+		choice4.setForeground(Color.white);
+		choice4.setFont(normalFont);
+		choice4.setFocusPainted(false);
+		choice4.addActionListener(choiceHandler);
+		choice4.setActionCommand("c4");
+		choiceButtonPanel.add(choice4);
+
+		// Over head status bar for player knowledge
+		playerPanel = new JPanel();
+		playerPanel.setBounds(100, 70, 1400, 70);
+		playerPanel.setBackground(Color.black);
+		playerPanel.setLayout(new GridLayout(1,4));
+		con.add(playerPanel);
+
+		// The contents of the panel: Health and Object
+		hpLabel = new JLabel("HP: ");
+		hpLabel.setFont(normalFont);
+		hpLabel.setForeground(Color.white);
+		playerPanel.add(hpLabel);
+
+		hpLabelNumber = new JLabel();
+		hpLabelNumber.setFont(normalFont);
+		hpLabelNumber.setForeground(Color.white);
+		playerPanel.add(hpLabelNumber);
+
+		weaponLabel = new JLabel("Weapon: ");
+		weaponLabel.setFont(normalFont);
+		weaponLabel.setForeground(Color.white);
+		playerPanel.add(weaponLabel);
+
+		weaponLabelName = new JLabel();
+		weaponLabelName.setFont(normalFont);
+		weaponLabelName.setForeground(Color.white);
+		playerPanel.add(weaponLabelName);
+
+
+		//Calls to playerSetup() method
+		playerSetup();
+
+	}
+
+	//Player information
+	//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public void playerSetup()
+	{
+
+		// Initiating all player values to display on screen
+		playerHP = 100;
+		weapon = "Fists";
+		weaponLabelName.setText(weapon);
+		hpLabelNumber.setText("" + playerHP);
+
+		// Call to official game-page: the start of the video game story
+		introLab1();
+
+	}
+
+	//Start of the Intro to the Lab 
+	//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public void introLab1()
+	{
+		position = "introlab1";
+		mainTextArea.setText("You awake with blurry vision and ringing in your ears. Your skull pounds hard \nlike a drum, as if your head will split in half. Despite the agonizing pain, you \ndecide to power through it: \n\nGrunting, you weakly try to sit up.");
+		choice1.setText("C O N T I N U E");
+		choice2.setText("");
+		choice3.setText("");
+		choice4.setText("");
+	}
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\	
+	public void introLab2()
+	{
+		position = "introlab2";
+		mainTextArea.setText("Sitting up as much as you can, you feel your wrists suddenly grow heavy and \nresist with tension. You look down to see that you are strapped to the operation \ntable. \n\n\nWho did this,why are you here, and where in the world are you?!");
+		choice1.setText("C O N T I N U E");
+		choice2.setText("");
+		choice3.setText("");
+		choice4.setText("");
+	}
+	//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public void introLab3()
+	{
+		position = "introlab3";
+		mainTextArea.setText("Fortunately, you (mysteriously) have a utility knife in hand! It's weird, why would you---assuming you were kidnapped---still have items on you? \n\n Well, whatever, now's your chance to escape!");
+		choice1.setText("C O N T I N U E");
+		choice2.setText("");
+		choice3.setText("");
+		choice4.setText("");
+	}
+	//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public void introLab4()
+	{
+		position = "introlab4";
+		mainTextArea.setText("You quickly saw through the strappings, and release yourself from your \nimprisoned state! Huzzah! Rubbing yout wrists from how sore they were, you \nrealize your headache is getting better. \n\nYour vision finally stabilzes, and you can see around the dimmly lit room.");
+		choice1.setText("C O N T I N U E");
+		choice2.setText("");
+		choice3.setText("");
+		choice4.setText("");
+	}
+	//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public void introLab5()
+	{
+		position = "introlab5";
+		mainTextArea.setText("Now looking around, you infer that you are in some type of labratory. The walls \nare lined with shelves holding neatly labeled jars filled with strange liquids and ...things. \n\nWhat an erie vibe...how did you end up here?");
+		choice1.setText("C O N T I N U E");
+		choice2.setText("");
+		choice3.setText("");
+		choice4.setText("");
+	}
+	//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	//End of Lab Intro
+
+	// Choices: the interactive user game-play (Looping with no story progression)
+	//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public void done()
+	{
+		position = "done";
+		mainTextArea.setText("What do you choose to do?");
+		choice1.setText("M O V E");
+		choice2.setText("A C T I O N");
+		choice3.setText("E X A M I N E");
+		choice4.setText("Q U I T");
+	}
+
+	// Map Pop-up show: To declare where the player is
+	//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public void ShowPicture()
+	{
+		mapPanel.setVisible(true);
+	}
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+
+	// Movement Mechanics: to migrate to different rooms
+	// Lab Room:
+	//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public int moveLab(int roomList[], int roomNum)
+	{
+		position = "moveLab";
+		ShowPicture();
+		roomNum = roomList[0];
+		mainTextArea.setText("You decide that it's best to move on, and you picked the Labratory clean of clues. \n You gather all of your items and press on. \n\nWhich direction would you like to go? \n[ LOCATION: LABRATORY ]");
+
+		choice1.setText("WEST");
+		choice2.setText("NORTH");
+		choice3.setText("EAST");
+		choice4.setText("SOUTH");
+
+		return roomNum;
+
+	}
+	// Hall Room:
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public int moveHall(int roomList[], int roomNum)
+	{
+		position = "moveHall";
+		ShowPicture();
+		roomNum = roomList[1];
+		mainTextArea.setText("You decide that it's best to move on, and you picked the Hall clean of clues. \n You gather all of your items and press on. \n\nWhich direction would you like to go? \n[ LOCATION: HALL ]");
+
+		choice1.setText("WEST");
+		choice2.setText("NORTH");
+		choice3.setText("EAST");
+		choice4.setText("SOUTH");
+
+		return roomNum;
+
+	}
+	// Bar Room:
+	//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public int moveBar(int roomList[], int roomNum)
+	{
+		position = "moveBar";
+		ShowPicture();
+		roomNum = roomList[2];
+		mainTextArea.setText("You decide that it's best to move on, and you picked the Bar (?) clean of clues. \n You gather all of your items and press on. \n\nWhich direction would you like to go? \n[ LOCATION: BAR (?) ]");
+
+		choice1.setText("WEST");
+		choice2.setText("NORTH");
+		choice3.setText("EAST");
+		choice4.setText("SOUTH");
+
+		return roomNum;
+
+	}
+	// Evil Conference:
+	//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public int moveEvilCon(int roomList[], int roomNum)
+	{
+		position = "moveEvilCon";
+		ShowPicture();
+		roomNum = roomList[3];
+		mainTextArea.setText("You decide that it's best to move on, and you picked the Evil Conference Room clean of clues. \n You gather all of your items and press on. \n\nWhich direction would you like to go? \n[ LOCATION: EVIL CONFERENCE ROOM ]");
+
+		choice1.setText("WEST");
+		choice2.setText("NORTH");
+		choice3.setText("EAST");
+		choice4.setText("SOUTH");
+
+		return roomNum;
+
+	}
+	// Magic Shop (?):
+	//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public int moveMagicShop(int roomList[], int roomNum)
+	{
+		position = "moveMagicShop";
+		ShowPicture();
+		roomNum = roomList[4];
+		mainTextArea.setText("You decide that it's best to move on, and you picked the Magic Shop (?) clean of \nclues. \nYou gather all of your items and press on. \n\nWhich direction would you like to go? \n[ LOCATION: MAGIC SHOP (?) ]");
+
+		choice1.setText("WEST");
+		choice2.setText("NORTH");
+		choice3.setText("EAST");
+		choice4.setText("SOUTH");
+
+		return roomNum;
+
+	}
+	// Shark Tank:
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public int moveSharkTank(int roomList[], int roomNum)
+	{
+		position = "moveSharkTank";
+		ShowPicture();
+		roomNum = roomList[5];
+		mainTextArea.setText("You decide that it's best to move on, and you picked the Shark Tank clean of \nclues. \n You gather all of your items and press on. \n\nWhich direction would you like to go? \n[ LOCATION: SHARK TANK ]");
+
+		choice1.setText("WEST");
+		choice2.setText("NORTH");
+		choice3.setText("EAST");
+		choice4.setText("SOUTH");
+
+		return roomNum;
+
+	}
+	// Command Center:
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public int moveComCenter(int roomList[], int roomNum)
+	{
+		position = "moveComCenter";
+		ShowPicture();
+		roomNum = roomList[6];
+		mainTextArea.setText("You decide that it's best to move on, and you picked the Command Center clean of clues. \n You gather all of your items and press on. \n\nWhich direction would you like to go? \n[ LOCATION: COMMAND CENTER ]");
+		choice1.setText("WEST");
+		choice2.setText("NORTH");
+		choice3.setText("EAST");
+		choice4.setText("SOUTH");
+
+		return roomNum;
+
+	}
+	// Gym:
+	//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public int moveGym(int roomList[], int roomNum)
+	{
+		position = "moveGym";
+		ShowPicture();
+		roomNum = roomList[7];
+		mainTextArea.setText("You decide that it's best to move on, and you picked the Gym clean of clues. \n You gather all of your items and press on. \n\nWhich direction would you like to go? \n[ LOCATION: GYM ]");
+
+		choice1.setText("WEST");
+		choice2.setText("NORTH");
+		choice3.setText("EAST");
+		choice4.setText("SOUTH");
+
+		return roomNum;
+
+	}
+
+	// When player cannot go to room/no room exists in selected cardinal direction:
+	//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public void moveCancel()
+	{
+		position = "moveCancel";
+		mapPanel.setVisible(false);
+		mainTextArea.setText("An intimidating wall blocks your path...you cannot press further. \nYou shrug and decide to choose a different path.");
+
+		choice1.setText("GO BACK");
+		choice2.setText("");
+		choice3.setText("");
+		choice4.setText("");
+	}
+
+	// Confirmation of arrival to proper room	
+	// Lab Confirmation:
+	//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public int lab(int roomNum, int roomList[])
+	{
+		position = "lab";
+		roomNum = roomList[0];
+		mapPanel.setVisible(false);
+
+		mainTextArea.setText("You have arrived in the Labratory. \nYou shiver remembering you were strapped down in this room just moments ago. It's unsettling to say the least, just looking around...");
+		choice1.setText("C O N T I N U E");
+		choice2.setText("");
+		choice3.setText("");
+		choice4.setText("");
+
+		return roomNum;
+	}
+	// Hall Confirmation:
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\	
+	public int hall(int roomNum, int roomList[])
+	{
+		position = "hall";
+		roomNum = roomList[1];
+		mapPanel.setVisible(false);
+
+		mainTextArea.setText("You enter the next room. \nIt is a grand hallway lined with several doors, each with a different embroidered \ndesign along the handles and door frame. With your quick wits and intuition, you safely assume that this long corridor must be the hall that connects to all major \nrooms. \n\nWhere will you explore next?");
+		choice1.setText("C O N T I N U E");
+		choice2.setText("");
+		choice3.setText("");
+		choice4.setText("");
+
+		return roomNum;
+	}
+	// Bar Confirmation:
+	//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public int bar(int roomNum, int roomList[])
+	{
+		position = "bar";
+		roomNum = roomList[2];
+		mapPanel.setVisible(false);
+
+		mainTextArea.setText("You find yourself inside what appears to be a bar, except you can't help but feel as if something is off. \n\nYou look around, there is a wooden bar and several stools. Light smooth jazz and the clinking of glassware can be heard in the distance. The hazy warm yellow \nlights lining the bottom and top of the wooden bar flicker occasionally.");
+		choice1.setText("C O N T I N U E");
+		choice2.setText("");
+		choice3.setText("");
+		choice4.setText("");
+
+		return roomNum;
+	}
+	// Evil Conference Confirmation:
+	//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public int evilCon(int roomNum, int roomList[])
+	{	
+		position = "evilCon";
+		roomNum = roomList[3];
+		mapPanel.setVisible(false);
+
+		mainTextArea.setText("You enter the Evil Conference room. There is a long, grand table that spans the \nentire length of the room. \nOn the wall there is a screen that displays a photo of you as well as a brief \ndescription of your past. You have to admit it, whoever did the background check found a very appealing picture of you. \nThere is a glass of champagne in front of each chair. There is a man collapsed in a chair with an empty glass in his hand.");
+		choice1.setText("C O N T I N U E");
+		choice2.setText("");
+		choice3.setText("");
+		choice4.setText("");
+
+		return roomNum;
+	}
+	// Magic Shop Confirmation:
+	//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public int magicShop(int roomNum, int roomList[])
+	{
+		position = "magicShop";
+		roomNum = roomList[4];
+		mapPanel.setVisible(false);
+
+		mainTextArea.setText("You walk into a small room. \nThere is a strange man with a beard sitting alone at a table. He looks up at you \nand yells: \n\"Ach! A new customer! Please come in and see what I've got.\" \nYou sit down across from him. There is nothing on the table. \n\"HA! I fooled ya! You cant buy my stuff if I don't have any stuff to sell!\" \n\nYou decide this man has no value to you at the moment.");
+		choice1.setText("C O N T I N U E");
+		choice2.setText("");
+		choice3.setText("");
+		choice4.setText("");
+
+		return roomNum;
+
+	}
+	// Shark Tank Confirmation:
+	//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public int sharkTank(int roomNum, int roomList[])
+	{
+		position = "sharkTank";
+		roomNum = roomList[5];
+		mapPanel.setVisible(false);
+
+		mainTextArea.setText("You have arrived in the Shark Tank. \n\n...Wait...IN the shark tank?! \nYou look around and there are sharks swimming around you. \n\nYou look at yourself, you somehow are wearing full scuba gear. Needless to say, you are rather confused, and worried for your life.");
+		choice1.setText("C O N T I N U E");
+		choice2.setText("");
+		choice3.setText("");
+		choice4.setText("");
+
+		return roomNum;
+
+	}
+	// Command Center:
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public int comCenter(int roomNum, int roomList[])
+	{
+		position = "comCenter";
+		roomNum = roomList[6];
+		mapPanel.setVisible(false);
+
+		mainTextArea.setText("You crawl through the hatch in the bar and arrive in a command center. \nThere are screens on the walls that show footage of each room. \n\nControl panels line the walls, covered in switches that each seem to have a special purpose. ");
+		choice1.setText("C O N T I N U E");
+		choice2.setText("");
+		choice3.setText("");
+		choice4.setText("");
+
+		return roomNum;
+
+	}
+	// Gym:
+	//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public int gym(int roomNum, int roomList[])
+	{
+		position = "gym";
+		roomNum = roomList[7];
+		mapPanel.setVisible(false);
+
+		mainTextArea.setText("You enter the Gym. \n\nIt is full of people. Everyone is showing off to each other, bragging about how \nmuch they can lift. They are so focused on showing off, that nobody notices \nyou as you enter the room.");
+		choice1.setText("C O N T I N U E");
+		choice2.setText("");
+		choice3.setText("");
+		choice4.setText("");
+
+		return roomNum;
+
+	}
+
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	//Movement function: to get around the map!
+	//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public void move(int roomNum, int roomList[])
+	{
+		if (roomNum == 0)
+		{
+			moveLab(roomList, roomNum);
+		}
+		else if (roomNum == 1)
+		{
+			moveHall(roomList, roomNum);
+		}
+		else if (roomNum == 2)
+		{
+			moveBar(roomList, roomNum);
+		}
+		else if (roomNum == 3)
+		{
+			moveEvilCon(roomList, roomNum);
+		}
+		else if (roomNum == 4)
+		{
+			moveMagicShop(roomList, roomNum);
+		}
+		else if (roomNum == 5)
+		{
+			moveSharkTank(roomList, roomNum);
+		}
+		else if (roomNum == 6)
+		{
+			moveComCenter(roomList, roomNum);
+		}
+		else
+		{
+			moveGym(roomList, roomNum);
+		}
+	}
+
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	//Action function: to interact with select special points of interests in the rooms!
+	//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	//****TO BE IMPLEMENTED****
+	public void action()
+	{
+		position = "action";
+		mainTextArea.setText("You decide that you should do something about the situation. \n\nWhat do you choose to do?");
+		choice1.setText("T A K E");
+		choice2.setText("T A L K");
+		choice3.setText("U S E");
+		choice4.setText("");
+	}
+
+	//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	//Examine function: to examine and check on points of interests!
+	//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public void examine(int roomNum, int roomList[])
+	{
+		if (roomNum == 0)
+		{
+			examLab(roomList, roomNum);
+		}
+		else if (roomNum == 1)
+		{
+			examHall(roomList, roomNum);
+		}
+		else if (roomNum == 2)
+		{
+			examBar(roomList, roomNum);
+		}
+		else if (roomNum == 3)
+		{
+			examEvilCon(roomList, roomNum);
+		}
+		else if (roomNum == 4)
+		{
+			examMagicShop(roomList, roomNum);
+		}
+		else if (roomNum == 5)
+		{
+			examSharkTank(roomList, roomNum);
+		}
+		else if (roomNum == 6)
+		{
+			examComCenter(roomList, roomNum);
+		}
+		else
+		{
+			examGym(roomList, roomNum);
+		}
+		
+	}
+
+	// Labratory Examine:
+	//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public int examLab(int roomList[], int roomNum)
+	{
+		position = "examineLab";
+		roomNum = roomList[0];
+		mainTextArea.setText("You decide that you should take a closer look of your surroundings. Perhaps you can salvage something from the area. \n\nWhat do you choose to examine first?");
+		choice1.setText("OPERATION TABLE");
+		choice2.setText("JARS");
+		choice3.setText("DESK");
+		choice4.setText("FLOOR");
+
+		return roomNum;
+	}
+	// Hall Examine:
+	//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public int examHall(int roomList[], int roomNum)
+	{
+		position = "examineHall";
+		roomNum = roomList[1];
+		mainTextArea.setText("You decide that you should take a closer look of your surroundings. Perhaps you can salvage something from the area. \n\nWhat do you choose to examine first?");
+		choice1.setText("FLOOR");
+		choice2.setText("WALLS");
+		choice3.setText("");
+		choice4.setText("");
+
+		return roomNum;
+	}
+	// Bar (?) Examine:
+	//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public int examBar(int roomList[], int roomNum)
+	{
+		position = "examineBar";
+		roomNum = roomList[2];
+		mainTextArea.setText("You decide that you should take a closer look of your surroundings. Perhaps you can salvage something from the area. \n\nWhat do you choose to examine first?");
+		choice1.setText("DRUNKEN MAN");
+		choice2.setText("BARTENDER");
+		choice3.setText("DRINKS");
+		choice4.setText("HATCH ON FLOOR");
+
+		return roomNum;
+	}
+	// Evil Conference Examine:
+	//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public int examEvilCon(int roomList[], int roomNum)
+	{
+		position = "examineEvilCon";
+		roomNum = roomList[3];
+		mainTextArea.setText("You decide that you should take a closer look of your surroundings. Perhaps you can salvage something from the area. \n\nWhat do you choose to examine first?");
+		choice1.setText("FILES");
+		choice2.setText("SCREEN");
+		choice3.setText("DECOR");
+		choice4.setText("PASSED OUT MAN");
+
+		return roomNum;
+	}
+	// Magic Shop (?) Examine:
+	//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public int examMagicShop(int roomList[], int roomNum)
+	{
+		position = "examineMagicShop";
+		roomNum = roomList[4];
+		mainTextArea.setText("You decide that you should take a closer look of your surroundings. Perhaps you can salvage something from the area. \n\nWhat do you choose to examine first?");
+		choice1.setText("SHADY WARES");
+		choice2.setText("\"RENOVATED\" SIGN");
+		choice3.setText("SHADY GUY");
+		choice4.setText("CHEST");
+		
+		return roomNum;
+	}
+	// Shark Tank Examine:
+	//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public int examSharkTank(int roomList[], int roomNum)
+	{
+		position = "examineSharkTank";
+		roomNum = roomList[5];
+		mainTextArea.setText("You decide that you should take a closer look of your surroundings. Perhaps you can salvage something from the area. \n\nWhat do you choose to examine first?");
+		choice1.setText("SHARK");
+		choice2.setText("FISH");
+		choice3.setText("GLASS BARRIER");
+		choice4.setText("SKULL");
+
+		return roomNum;
+	}
+	// Command Center Examine:
+	//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public int examComCenter(int roomList[], int roomNum)
+	{
+		position = "examineComCenter";
+		roomNum = roomList[6];
+		mainTextArea.setText("You decide that you should take a closer look of your surroundings. Perhaps you can salvage something from the area. \n\nWhat do you choose to examine first?");
+		choice1.setText("OPERATION TABLE");
+		choice2.setText("JARS");
+		choice3.setText("DESK");
+		choice4.setText("FLOOR");
+		
+		return roomNum;
+	}
+	// Gym Examine:
+	//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public int examGym(int roomList[], int roomNum)
+	{
+		position = "examineGym";
+		roomNum = roomList[7];
+		mainTextArea.setText("You decide that you should take a closer look of your surroundings. Perhaps you can salvage something from the area. \n\nWhat do you choose to examine first?");
+		choice1.setText("BICYCLE");
+		choice2.setText("FLEXING MEN");
+		choice3.setText("TOWELS");
+		choice4.setText("SHARK TANK");
+
+		return roomNum;
+	}
+
+	//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	//Quit function to quit the game!
+	//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	public void quit()
+	{
+		position = "quit";
+		mainTextArea.setText("Are you sure you want to quit? The game does not \nsave your progress. You will need to start all over again! \n\nDo you still want to quit the game?");
+		choice1.setText("Y E S");
+		choice2.setText("N O");
+		choice3.setText("");
+		choice4.setText("");
+	}
+	// Confirm option (In case it was accidentally clicked)
+	public void quitConfirm()
+	{
+		position = "quitConfirm";
+		mainTextArea.setText("Understood. You game will not be saved, and you will exit the game. \nWe hope you enjoyed the game! Please come back to try \nit again. \n\nPlease select the button to quit.");
+		choice1.setText("Q U I T");
+		choice2.setText("");
+		choice3.setText("");
+		choice4.setText("");
+	}
+	// Process of manual quitting
+	public void quitQuit()
+	{
+		position = "quitQuit";
+		System.exit(0);
+	}
+	//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+
+	//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	//Choice Handler
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\	
+	class TitleScreenHandler implements ActionListener
+	{
+		public void actionPerformed(ActionEvent event)
+		{
+			// Creating Game Screen
+			createGameScreen();
+		}
+	}
+
+	//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+	// "Listening" to clicks and interaction of buttons to determine choice
+	public class ChoiceHandler implements ActionListener
+	{
+		int roomNum = 0;
+
+		public void  actionPerformed(ActionEvent event)
+		{
+			String yourChoice = event.getActionCommand();
+
+			switch(position)
+			{
+
+			// Start of Adventure: The linear story-web
+			// Lab Intro: --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "introlab1":
+				switch(yourChoice)
+				{
+				case "c1": introLab2(); break;
+				}
+				break;
+				// LI-2
+				//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "introlab2":
+				switch(yourChoice)
+				{
+				case "c1": introLab3(); break;
+				}
+				break;
+				// LI-3
+				//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "introlab3":
+				switch(yourChoice)
+				{
+				case "c1": introLab4(); break;
+				}
+				break;
+				// LI-4
+				//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "introlab4":
+				switch(yourChoice)
+				{
+				case "c1": introLab5(); break;
+				}
+				break;
+				// Choice goes to generic actions of player:
+				// Determines changes and interactions -----------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "introlab5":
+				switch(yourChoice)
+				{
+				case "c1": done(); break;
+				}
+				break;
+				// 4-choices for player to play and engage in game!
+				//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "done":
+				switch(yourChoice)
+				{
+				case "c1": move(roomNum, roomList); break;
+				case "c2": action(); break;
+				case "c3": examine(roomNum, roomList); break;
+				case "c4": quit(); break;
+				}
+				break;
+				// Move Function:
+				// Move Lab:
+				//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "moveLab":
+				switch(yourChoice)
+				{
+				case "c1": moveCancel(); break;
+				case "c2": roomNum = hall(roomNum, roomList); break;
+				case "c3": moveCancel(); break;
+				case "c4": moveCancel(); break;
+				}
+				break;
+				// Move Hall:
+				//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "moveHall":
+				switch(yourChoice)
+				{
+				case "c1": roomNum = gym(roomNum, roomList); break;
+				case "c2": roomNum = evilCon(roomNum, roomList); break;
+				case "c3": roomNum = bar(roomNum, roomList); break;
+				case "c4": roomNum = lab(roomNum, roomList); break;
+				}
+				break;
+				// Move Bar:
+				//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "moveBar":
+				switch(yourChoice)
+				{
+				case "c1": roomNum = hall(roomNum, roomList); break;
+				case "c2": moveCancel(); break;
+				case "c3": moveCancel(); break;
+				case "c4": roomNum = comCenter(roomNum, roomList); break;
+				}
+				break;
+				// Move Evil Conference:
+				//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "moveEvilCon":
+				switch(yourChoice)
+				{
+				case "c1": roomNum = sharkTank(roomNum, roomList); break;
+				case "c2": moveCancel(); break;
+				case "c3": moveCancel(); break;
+				case "c4": roomNum = hall(roomNum, roomList); break;
+				}
+				break;
+				// Move Gym:
+				//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "moveGym":
+				switch(yourChoice)
+				{
+				case "c1": roomNum = magicShop(roomNum, roomList); break;
+				case "c2": roomNum = sharkTank(roomNum, roomList); break;
+				case "c3": roomNum = hall(roomNum, roomList); break;
+				case "c4": moveCancel(); break;
+				}
+				break;
+				// Move Magic Shop (?):
+				//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "moveMagicShop":
+				switch(yourChoice)
+				{
+				case "c1": moveCancel(); break;
+				case "c2": moveCancel(); break;
+				case "c3": roomNum = gym(roomNum, roomList); break;
+				case "c4": moveCancel(); break;
+				}
+				break;
+				// Move Shark Tank:
+				//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "moveSharkTank":
+				switch(yourChoice)
+				{
+				case "c1": moveCancel(); break;
+				case "c2": moveCancel(); break;
+				case "c3": roomNum = evilCon(roomNum, roomList); break;
+				case "c4": roomNum = gym(roomNum, roomList); break;
+				}
+				break;
+				// Move Command Center:
+				//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "moveComCenter":
+				switch(yourChoice)
+				{
+				case "c1": moveCancel(); break;
+				case "c2": roomNum = bar(roomNum, roomList); break;
+				case "c3": moveCancel(); break;
+				case "c4": moveCancel(); break;
+				}
+				break;
+
+				// Individual rooms and their initial description:
+				// Lab:
+				//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "lab":
+				switch(yourChoice)
+				{
+				case "c1": done(); break;
+				}
+				break;
+				// Hall:
+				//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "hall":
+				switch(yourChoice)
+				{
+				case "c1": done(); break;
+				}
+				break;
+				// Bar:
+				//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "bar":
+				switch(yourChoice)
+				{
+				case "c1": done(); break;
+				}
+				break;
+				// Evil Conference Room:
+				//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "evilCon":
+				switch(yourChoice)
+				{
+				case "c1": done(); break;
+				}
+				break;
+				// Magic Shop (?):
+				//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "magicShop":
+				switch(yourChoice)
+				{
+				case "c1": done(); break;
+				}
+				break;
+				// Shark Tank:
+				//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "sharkTank":
+				switch(yourChoice)
+				{
+				case "c1": done(); break;
+				}
+				break;
+				// Command Center:
+				//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "comCenter":
+				switch(yourChoice)
+				{
+				case "c1": done(); break;
+				}
+				break;
+				// Gym:
+				//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "gym":
+				switch(yourChoice)
+				{
+				case "c1": done(); break;
+				}
+				break;
+
+				// Move Cancel Function:
+				//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "moveCancel":
+				switch(yourChoice)
+				{
+				case "c1": done(); break;
+				}
+				break;	
+				// Action Function:
+				//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "action":
+				switch(yourChoice)
+				{
+				case "c1": done(); break;
+				}
+				break;
+				// Examine Function:
+				//Lab:
+				//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "examineLab":
+				switch(yourChoice)
+				{
+				case "c1": done(); break;
+				case "c2": done(); break;
+				case "c3": done(); break;
+				case "c4": done(); break;
+				}
+				break;
+				// Examine Hall:
+				//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "examineHall":
+				switch(yourChoice)
+				{
+				case "c1": done(); break;
+				case "c2": done(); break;
+				case "c3": done(); break;
+				case "c4": done(); break;
+				}
+				break;
+				// Examine Bar (?):
+				//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "examineBar":
+				switch(yourChoice)
+				{
+				case "c1": done(); break;
+				case "c2": done(); break;
+				case "c3": done(); break;
+				case "c4": done(); break;
+				}
+				break;
+				// Examine Evil Convention:
+				//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "examineEvilCon":
+				switch(yourChoice)
+				{
+				case "c1": done(); break;
+				case "c2": done(); break;
+				case "c3": done(); break;
+				case "c4": done(); break;
+				}
+				break;
+				// Examine Magic Shop:
+				//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "examineMagicShop":
+				switch(yourChoice)
+				{
+				case "c1": done(); break;
+				case "c2": done(); break;
+				case "c3": done(); break;
+				case "c4": done(); break;
+				}
+				break;
+				// Examine Shark Tank:
+				//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "examineSharkTank":
+				switch(yourChoice)
+				{
+				case "c1": done(); break;
+				case "c2": done(); break;
+				case "c3": done(); break;
+				case "c4": done(); break;
+				}
+				break;
+				// Examine Command Center:
+				//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "examineComCenter":
+				switch(yourChoice)
+				{
+				case "c1": done(); break;
+				case "c2": done(); break;
+				case "c3": done(); break;
+				case "c4": done(); break;
+				}
+				break;
+				// Examine Gym:
+				//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "examineGym":
+				switch(yourChoice)
+				{
+				case "c1": done(); break;
+				case "c2": done(); break;
+				case "c3": done(); break;
+				case "c4": done(); break;
+				}
+				break;
+				
+				// Quit Function:
+				//Manually quitting the game: --------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "quit":
+				switch(yourChoice)
+				{
+				case "c1": quitConfirm(); break;
+				case "c2": done(); break;
+				}
+				break;
+				// Quit Confirmation:
+				//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			case "quitConfirm":
+				switch(yourChoice)
+				{
+				case "c1": quitQuit(); break;
+				}
+				break;
+				// Essentially end of coding...
+				//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\\
+			}
+		}
+	}
+}
+
+
