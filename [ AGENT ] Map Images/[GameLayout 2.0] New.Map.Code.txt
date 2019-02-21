@@ -1,0 +1,25 @@
+﻿		System.out.println("╔╦══════════════════════════════════════╗");
+		System.out.println("╠╬══════════════════════════════════════╣");
+		System.out.println("║║ ┌──────────┐ ┌────────────────────┐  ║");
+		System.out.println("║║ │SHARK TANK│↔│EVIL CONFERENCE ROOM│  ║");
+		System.out.println("║║ └──────────┘ └────────────────────┘  ║");
+		System.out.println("║║          ↕             ↕             ║");
+		System.out.println("║║ ┌─────┐ ┌──────────┐ ┌───┐           ║");
+		System.out.println("║║ │MAGIC│↔│   GYM    │↔│ H │           ║");
+		System.out.println("║║ │SHOP │ └──────────┘ │ A │ ┌──────┐  ║");
+		System.out.println("║║ └─────┘              │ L │↔│ BAR? │  ║");
+		System.out.println("║║                      │ L │ └──────┘  ║");
+		System.out.println("║║                      └───┘    ↕      ║");
+		System.out.println("║║                        ↕   ┌───────┐ ║");
+		System.out.println("║║                      ┌───┐ │CONTROL│ ║");
+		System.out.println("║║                      │LAB│ │CENTER │ ║");
+		System.out.println("║║                      └───┘ └───────┘ ║");
+		System.out.println("╠╬╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╣");
+		System.out.println("╚╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╝");
+		System.out.println("      CURRENT LOCATION:      ");
+		if(location=arrayName[0]) {
+			System.out.println("     EVIL CONFERENCE ROOM    ");
+		}else if(location=arrayName[1]) {
+			System.out.println("            BAR?             ");
+			
+		}//...
